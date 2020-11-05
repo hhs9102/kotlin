@@ -19,7 +19,7 @@ import java.util.Random
 class FirstKotlinClass(val name: String) //public 생략 -> kotlin 기본 접근제한자 = public
 
 
-class Person(
+data class Person(
     val name: String,       //읽기전용 -> getter를 만듦
     var isMarried: Boolean  //getter, setter를 만듦
 )
