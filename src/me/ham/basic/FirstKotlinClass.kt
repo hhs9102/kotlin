@@ -1,5 +1,7 @@
 package me.ham.basic
 
+import me.ham.basic.delegation.PropertyChangeAware
+import java.beans.PropertyChangeListener
 import java.util.Random
 
 //public class FirstKotlinClass {
@@ -19,10 +21,18 @@ import java.util.Random
 class FirstKotlinClass(val name: String) //public 생략 -> kotlin 기본 접근제한자 = public
 
 
-data class Person(
-    val name: String,       //읽기전용 -> getter를 만듦
-    var isMarried: Boolean  //getter, setter를 만듦
-)
+class Person(
+    val name: String,
+    isMarried: Boolean
+): PropertyChangeAware(){
+
+    var isMarried: Boolean = isMarried
+    set(newValue){
+        var oldValue = field
+        field = newValue
+        changeSupport.firePropertyChange("isMarried", oldValue, newValue)
+    }
+}
 
 class Rectangle(val height:Int, val width:Int){
     val isSquare :Boolean
@@ -45,6 +55,14 @@ fun main(){
     println("randomRectange width : ${createRandomRectangle.width}, height : ${createRandomRectangle.height}")
 
     println(createRandomRectangle().isSquare)
+
+    var person = Person("ham",false)
+    person.addPropertyChangeListener(PropertyChangeListener {event->
+        println("property ${event.propertyName}가 변경되었습니다. oldValue: ${event.oldValue}, newValue: ${event.newValue}")
+    });
+
+    person.isMarried = true
+    person.isMarried = false
 }
 
 fun createRandomRectangle(): Rectangle{
